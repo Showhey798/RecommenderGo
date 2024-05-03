@@ -1,2 +1,3 @@
-# DemoYatagarasu
-yatagarasuに似たサービスを作る
+# RecommenderGo
+
+推薦システムを運用するための推論サーバーを作成します
