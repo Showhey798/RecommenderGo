@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "./pkg/proto/api"; 
+
+
+service UserService {
+    rpc GetUser(GetUserRequest) returns (User) {}
+    rpc CreateUser(CreateUserRequest) returns (User) {}
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+}
+
+message GetUserRequest {
+    string id = 1;
+}
+
+message CreateUserRequest {
+    string name = 1;
+}
+
+message DeleteUserRequest {
+    string id = 1;
+}
+
+message DeleteUserResponse {
+    bool success = 1;
+}
+
+message User {
+    string id = 1;
+    string name = 2;
+}
+
