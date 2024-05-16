@@ -4,13 +4,29 @@ services:
   recomend_server:
     build: ./build
     container_name: recommend-grpc-server
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     volumes: 
       - .:/app
     ports:
       - "8080:8080"
     tty: true
-  bigtable:
-    image: "google/cloud-sdk:430.0.0"
-    command: gcloud beta emulators bigtable start --host-port 0.0.0.0:8086
+  db:
+    image: postgres:16.3
+    container_name: recommend-db
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     ports:
-      - 8086:8086
+      - "5432:5432"
+    volumes:
+      - database:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+volumes:
+  database:
+    driver: local

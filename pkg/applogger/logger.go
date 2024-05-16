@@ -65,7 +65,7 @@ func NewLogMessage(msg string, obj interface{}) LogMessage {
 }
 
 // TODO: Singleton化する
-func New() Logger {
+func New() AppLogger {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	return &AppLogger{logger: logger}
+	return AppLogger{logger: logger}
 }

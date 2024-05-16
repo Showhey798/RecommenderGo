@@ -3,11 +3,11 @@ package repository
 import (
 	"context"
 
-	"recommender.package/pkg/domain/entity"
+	"recommender.package/internal/domain/entity"
 )
 
 type MovieRepository interface {
-	Get(ctx context.Context, id string) (entity.Movie, error)
-	GetByIds(ctx context.Context, ids []string) ([]entity.Movie, error)
-	Create(ctx context.Context, movie entity.Movie) error
+	Get(ctx context.Context, id uint32) (entity.Movie, error)
+	GetByIds(ctx context.Context, ids []uint32) ([]entity.Movie, error)
+	Create(ctx context.Context, item entity.Movie) error
 }
