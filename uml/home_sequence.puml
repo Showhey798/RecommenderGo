@@ -1,0 +1,18 @@
+@startuml
+
+User -> Home: view home page
+activate Home
+Home -> UserToContent: get modules
+activate UserToContent
+par
+    UserToContent -> Recommender: get module
+    activate Recommender
+    Recommender --> UserToContent: module
+deactivate Recommender
+end
+UserToContent --> Home: modules
+deactivate UserToContent
+Home --> User: modules
+deactivate Home
+
+@enduml

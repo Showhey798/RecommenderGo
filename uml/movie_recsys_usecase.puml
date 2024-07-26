@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+skinparam actorStyle awesome
+
+
+:Admin: as Admin
+:User: as User
+
+package System{
+    usecase "映画一覧を閲覧する" as ViewMovieUC
+    usecase "過去の視聴履歴を閲覧する" as ViewMovieHistUC
+    usecase "マイページを閲覧する" as ViewMyPageUC
+    usecase "映画の詳細ページを閲覧する" as ViewMovieDescUC
+    usecase "映画を評価する" as EvalMovieUC
+    usecase "映画を登録する" as InsertMovieUC
+    usecase "モジュールごとの評価を閲覧する" as ViewModuleEvalUC
+}
+
+ViewMovieUC -[hidden]-> ViewMovieHistUC
+ViewMovieHistUC -[hidden]-> ViewMyPageUC
+ViewMyPageUC -[hidden]-> ViewMovieDescUC
+ViewMovieDescUC -[hidden]-> EvalMovieUC
+EvalMovieUC -[hidden]-> InsertMovieUC
+InsertMovieUC -[hidden]-> ViewModuleEvalUC
+
+
+User -l-> ViewMovieUC
+User -l-> ViewMovieHistUC
+User -l-> ViewMovieDescUC
+User -l-> ViewMyPageUC
+User -l-> EvalMovieUC
+InsertMovieUC <-r- Admin
+ViewModuleEvalUC <-r- Admin
+
+
+@enduml

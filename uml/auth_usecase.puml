@@ -1,0 +1,19 @@
+@startuml
+
+actor User
+
+User -> AuthGateway: SignUp(SignUpRequest)
+activate AuthGateway
+AuthGateway -> AuthGateway: Validate(SignUpRequest)
+AuthGateway -> AuthGateway: HashPassword(SignUpRequest)
+AuthGateway -> AuthUsecase: SignUp(SignUpParam)
+activate AuthUsecase
+AuthUsecase -> AuthRepository: Create(User)
+activate AuthRepository
+AuthRepository --> AuthUsecase: User
+deactivate AuthRepository
+AuthUsecase --> AuthGateway: User
+deactivate AuthUsecase
+AuthGateway --> User: SignUpResponse
+deactivate AuthGateway
+@enduml

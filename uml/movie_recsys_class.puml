@@ -1,0 +1,17 @@
+@startuml
+
+class MyPage {}
+
+class Content {}
+
+class UserToContent {}
+
+class History {}
+
+class User {}
+
+
+
+
+
+@enduml

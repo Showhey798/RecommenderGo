@@ -1,0 +1,13 @@
+@startuml
+
+actor User
+participant "auth-usecase" as usecase
+participant "auth-repo" as repo
+
+User -> usecase: signup(username, password)
+usecase -> usecase: validate(username, password)
+usecase -> usecase: hash(password)
+usecase -> repo: create(username, password)
+
+
+@enduml
