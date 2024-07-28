@@ -8,14 +8,11 @@ const (
 	GmailDomain AvailableEmailDomain = "gmail.com"
 )
 
-type Auth struct {
-	Email    string
-	Password string
-}
+type Email string
 
-func (a *Auth) CheckAvailableEmail() bool {
+func (e Email) CheckAvailableEmail() bool {
 	// @以降がgmail.comのみ許可
-	userDomains := strings.Split(a.Email, "@")
+	userDomains := strings.Split(string(e), "@")
 	if len(userDomains) != 2 {
 		return false
 	}

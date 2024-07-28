@@ -1,7 +1,7 @@
 package gateway
 
 import (
-	"github.com/RecommenderGo/internal/usecase"
+	"github.com/Showhey798/RecommenderGo/internal/usecase"
 )
 
 type SignupRequest struct {
