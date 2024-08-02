@@ -1,71 +1,35 @@
 package main
 
 import (
-	"fmt"
+	"github.com/Showhey798/RecommenderGo/cmd/config"
+	gateway "github.com/Showhey798/RecommenderGo/internal/gateway/http"
+	"github.com/Showhey798/RecommenderGo/internal/repository"
+	"github.com/Showhey798/RecommenderGo/internal/repository/postgres"
+	"github.com/Showhey798/RecommenderGo/internal/usecase"
+	"github.com/go-chi/chi"
 	"net/http"
-	"sync"
-
-	"github.com/astaxie/session"
-)
-
-var (
-	// セッション情報を保存するためのmap
-	sessions = make(map[string]bool)
-	// セッション情報へのアクセスを同期するためのMutex
-	sessionMutex   = &sync.Mutex{}
-	globalSessions *session.Manager
 )
 
 func main() {
-	http.HandleFunc("/login", loginHandler)
-	http.HandleFunc("/", rootHandler)
-	http.ListenAndServe(":8080", nil)
-}
-
-func loginHandler(responseWriter http.ResponseWriter, req *http.Request) {
-
-	sessionID := "user123"
-
-	sessionMutex.Lock()
-	sessions[sessionID] = true
-
-	for id := range sessions {
-		fmt.Println("loginHandler: Currenct sessionID: ", id)
+	cfg := config.Config{
+		Dsn:      "host=localhost port=5432 user=postgres password=postgres dbname=postgres sslmode=disable",
+		DbDriver: "postgres",
 	}
+	db, err := postgres.SetUpDB(cfg.DbDriver, cfg.Dsn)
 
-	sessionMutex.Unlock()
-
-	http.SetCookie(responseWriter, &http.Cookie{
-		Name:   "session_id",
-		Value:  sessionID,
-		Path:   "/",
-		MaxAge: 60,
-	})
-
-	_, err := responseWriter.Write([]byte("login successfully!"))
 	if err != nil {
 		panic(err)
 	}
-}
 
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("session_id")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusFound)
-		return
+	database := repository.Database{
+		Auth: &postgres.AuthRepository{DB: db},
 	}
+	uc := usecase.New(database)
+	gw := gateway.NewGateway(uc)
+	r := chi.NewRouter()
+	gw.RegisterGateway(r)
 
-	sessionMutex.Lock()
-	_, ok := sessions[cookie.Value]
-	sessionMutex.Unlock()
-
-	if !ok {
-		http.Redirect(w, r, "/login", http.StatusFound)
-		return
-	}
-
-	_, err = w.Write([]byte("Hello World!"))
-	if err != nil {
+	if err := http.ListenAndServe(":8080", r); err != nil {
 		panic(err)
 	}
 }
