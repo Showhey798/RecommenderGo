@@ -41,7 +41,7 @@ func (m *MockAuth) EXPECT() *MockAuthMockRecorder {
 }
 
 // CreateUser mocks base method.
-func (m *MockAuth) CreateUser(ctx context.Context, user entity.User) error {
+func (m *MockAuth) CreateUser(ctx context.Context, user *entity.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateUser", ctx, user)
 	ret0, _ := ret[0].(error)
@@ -55,7 +55,7 @@ func (mr *MockAuthMockRecorder) CreateUser(ctx, user any) *gomock.Call {
 }
 
 // FindUserByEmail mocks base method.
-func (m *MockAuth) FindUserByEmail(ctx context.Context, email entity.Email) (entity.User, error) {
+func (m *MockAuth) FindUserByEmail(ctx context.Context, email string) (entity.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindUserByEmail", ctx, email)
 	ret0, _ := ret[0].(entity.User)

@@ -7,6 +7,7 @@ import (
 	"github.com/Showhey798/RecommenderGo/internal/repository/postgres"
 	"github.com/Showhey798/RecommenderGo/internal/usecase"
 	"github.com/go-chi/chi"
+	"go.uber.org/zap"
 	"net/http"
 )
 
@@ -21,15 +22,19 @@ func main() {
 		panic(err)
 	}
 
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+
 	database := repository.Database{
 		Auth: &postgres.AuthRepository{DB: db},
 	}
-	uc := usecase.New(database)
-	gw := gateway.NewGateway(uc)
+	uc := usecase.New(logger, database)
+	gw := gateway.NewGateway(logger, uc)
 	r := chi.NewRouter()
 	gw.RegisterGateway(r)
-
+	logger.Info("Server starting...")
 	if err := http.ListenAndServe(":8080", r); err != nil {
+		logger.Error("failed to start server", zap.Error(err))
 		panic(err)
 	}
 }

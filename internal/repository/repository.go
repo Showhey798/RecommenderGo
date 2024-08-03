@@ -10,7 +10,7 @@ import (
 
 type Auth interface {
 	// auth repository
-	//FindUserByEmail(ctx context.Context, email entity.Email) (entity.User, error)
+	FindUserByEmail(ctx context.Context, email string) (entity.User, error)
 	CreateUser(ctx context.Context, user *entity.User) error
 }
 

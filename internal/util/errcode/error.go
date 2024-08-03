@@ -165,7 +165,7 @@ func IsServerError(err error) bool {
 	return IsUnknown(err) || IsInternal(err) || IsDeadlineExceeded(err)
 }
 
-func NewInvalidArgumen(format string, a ...interface{}) error {
+func NewInvalidArgument(format string, a ...interface{}) error {
 	stack := debug.Stack()
 	return &Error{
 		Code:   CodeInvalidArgument,

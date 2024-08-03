@@ -2,41 +2,32 @@ package gateway
 
 import (
 	"context"
-	"github.com/Showhey798/RecommenderGo/internal/domain/entity"
-	"github.com/Showhey798/RecommenderGo/internal/gateway/http/middleware"
 	"github.com/Showhey798/RecommenderGo/internal/gateway/http/request"
 	"github.com/Showhey798/RecommenderGo/internal/usecase"
 	"net/http"
 )
 
-type SignupRequest struct {
+type AuthRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-func (a *Gateway) Signup(w http.ResponseWriter, r *http.Request) {
+func (g *Gateway) Signup(w http.ResponseWriter, r *http.Request) {
 
 	ctx := context.Background()
 
-	req := &SignupRequest{}
+	req := &AuthRequest{}
 
 	if err := request.Bind(r, req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	password, err := middleware.EncryptPassword(req.Password)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = a.usecase.Signup(
+	err := g.usecase.Signup(
 		ctx,
 		&usecase.SignUpParams{
-			Email:    entity.Email(req.Email),
-			Password: entity.Password(password),
+			Email:    req.Email,
+			Password: req.Password,
 		})
 
 	if err != nil {
@@ -44,4 +35,29 @@ func (a *Gateway) Signup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (g *Gateway) Login(w http.ResponseWriter, r *http.Request) {
+
+	ctx := context.Background()
+
+	req := &AuthRequest{}
+
+	if err := request.Bind(r, req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := g.usecase.Login(
+		ctx,
+		&usecase.LogInParams{
+			Email:    req.Email,
+			Password: req.Password,
+		})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
