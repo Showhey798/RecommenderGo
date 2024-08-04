@@ -18,7 +18,6 @@ const (
 	CodeNotFound
 	CodeAlreadyExists
 	CodeInternal
-	CodeUnimplemented
 	CodeDeadlineExceeded
 	CodeContextCanceled
 	CodeDataLoss
@@ -42,8 +41,6 @@ func (c Code) String() string {
 		return "AlreadyExists"
 	case CodeInternal:
 		return "Internal"
-	case CodeUnimplemented:
-		return "Unimplemented"
 	case CodeDeadlineExceeded:
 		return "DeadlineExceeded"
 	case CodeDataLoss:
@@ -74,6 +71,28 @@ type Error struct {
 }
 
 type Errors []Error
+
+
+func HTTPStatus(err error) int {
+	if err == nil{
+		return http.StatusOK
+	}
+	var cerr *Error
+
+	if errors.As(err, &cerr){
+		return cerr.Code.HTTPStatus()
+	}
+}
+
+func (c *Code) HTTPStatus() int{
+	switch c {
+	case CodeInvalidArgument:
+		return http.StatusBadRequest
+	case CodeNotFound:
+		return http.StatusNotFound
+	}
+	return http.StatusInternalServerError
+}
 
 func (e Errors) Error() string {
 	msgs := lo.Map(e, func(_ Error, i int) string {
